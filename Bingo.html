@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>El Bingo de Luca</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url('LucaFutbol.jpg'); /* ⚠️ Reemplaza esto con la ruta real */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    }
+
+    /* Sobreponer un fondo semitransparente para mejorar legibilidad */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.85); /* Ajusta la opacidad según necesites */
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .contenedor-principal {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+
+    #numero {
+      font-size: 130px;
+      font-weight: bold;
+      color: #2c3e50;
+      margin: 20px 0;
+      min-width: 200px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #lista-salidos {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      max-width: 300px;
+      margin-top: 20px;
+    }
+
+    .numero-salido {
+      background-color: #3498db;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 16px 32px;
+      font-size: 22px;
+      cursor: pointer;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #219653;
+    }
+
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-top: 20px;
+      font-size: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎉 El Bingo de Luca 🎉</h1>
+
+  <div class="contenedor-principal">
+    <div>
+      <div id="numero">¡Presiona "Siguiente"!</div>
+      <button id="btnSiguiente" onclick="mostrarSiguiente()">Siguiente</button>
+    </div>
+
+    <div>
+      <h2>Números salidos:</h2>
+      <div id="lista-salidos"></div>
+    </div>
+  </div>
+
+  <script>
+    // Generar y mezclar los números del 1 al 60 (sin repetir)
+    let numeros = Array.from({length: 60}, (_, i) => i + 1);
+    for (let i = numeros.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [numeros[i], numeros[j]] = [numeros[j], numeros[i]];
+    }
+
+    let indiceActual = 0;
+    const numeroElement = document.getElementById("numero");
+    const listaSalidos = document.getElementById("lista-salidos");
+    const boton = document.getElementById("btnSiguiente");
+
+    function mostrarSiguiente() {
+      if (indiceActual < numeros.length) {
+        const num = numeros[indiceActual];
+        numeroElement.textContent = num;
+
+        // Crear y añadir el número a la lista lateral
+        const numElement = document.createElement("div");
+        numElement.className = "numero-salido";
+        numElement.textContent = num;
+        listaSalidos.appendChild(numElement);
+
+        indiceActual++;
+
+        // Deshabilitar botón al final
+        if (indiceActual >= numeros.length) {
+          boton.disabled = true;
+          boton.textContent = "¡Bingo completo!";
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
