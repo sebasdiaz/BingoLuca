@@ -3,154 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>El Bingo de Luca - Edición Quiniela</title>
+  <title>El Bingo de Luca - Quiniela</title>
   <style>
-    :root {
-      --primary-color: #2c3e50;
-      --secondary-color: #27ae60;
-      --accent-color: #3498db;
-      --highlight-color: #f39c12;
-    }
-
+    /* Estilos base */
     body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background-image: url('LucaFutbol.jpg'); 
+      /* Imagen de fondo */
+      background-image: url('LucaFutbol.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      position: relative;
+    }
+
+    /* Capa blanca semi-transparente para que se lea el texto */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.85); /* 85% de blanco */
+      z-index: 1;
+    }
+
+    /* Contenedor de todo el contenido (encima de la capa) */
+    .contenido-seguro {
+      position: relative;
+      z-index: 10;
+      width: 95%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 20px;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(255, 255, 255, 0.92);
-      z-index: -1;
+    h1 {
+      color: #2c3e50;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
-    .main-container {
+    .paneles {
       display: grid;
       grid-template-columns: 1fr 1.5fr;
       gap: 30px;
       width: 100%;
-      max-width: 1100px;
     }
 
-    /* Panel Izquierdo: Número y Significado */
-    .control-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    /* Panel del Número Grande */
+    .panel-izquierdo {
       background: white;
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    #numero-grande {
-      font-size: 160px;
+    #numero-display {
+      font-size: 140px;
       font-weight: 900;
-      color: var(--accent-color);
+      color: #3498db;
       line-height: 1;
       margin: 10px 0;
     }
 
-    #significado-texto {
-      font-size: 2.5rem;
+    #significado-display {
+      font-size: 2.2rem;
       font-weight: bold;
-      color: var(--highlight-color);
-      min-height: 3.5rem;
+      color: #f39c12;
+      min-height: 3rem;
       text-transform: uppercase;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
-    /* Tablero Derecho */
-    .board-panel {
-      background: white;
+    /* Panel del Tablero (Grilla) */
+    .panel-derecho {
+      background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
-    .grilla-bingo {
+    .grilla {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 5px;
+      gap: 6px;
     }
 
-    .celda {
+    .bola {
       aspect-ratio: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #eee;
-      border-radius: 8px;
+      border: 1px solid #ddd;
+      border-radius: 50%;
       font-weight: bold;
-      color: #ddd;
+      color: #bbb;
+      background: white;
       font-size: 1rem;
     }
 
-    .celda.marcada {
-      background-color: var(--secondary-color);
+    .bola.marcada {
+      background-color: #27ae60;
       color: white;
-      transform: scale(1.05);
+      border-color: #27ae60;
+      transform: scale(1.1);
+      transition: all 0.3s ease;
     }
 
-    .button-group {
+    /* Botones */
+    .botones {
       display: flex;
-      gap: 10px;
+      gap: 15px;
       width: 100%;
     }
 
     button {
       flex: 1;
-      padding: 18px;
+      padding: 15px;
       font-size: 1.2rem;
       font-weight: bold;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: transform 0.1s;
     }
 
-    #btnSiguiente { background: var(--secondary-color); color: white; }
-    #btnReiniciar { background: #eee; color: #666; }
+    button:active { transform: scale(0.98); }
 
-    @media (max-width: 850px) {
-      .main-container { grid-template-columns: 1fr; }
+    #btnSiguiente { background: #27ae60; color: white; }
+    #btnReiniciar { background: #e0e0e0; color: #333; }
+
+    /* Responsivo para celulares */
+    @media (max-width: 800px) {
+      .paneles { grid-template-columns: 1fr; }
+      #numero-display { font-size: 100px; }
+      .grilla { grid-template-columns: repeat(6, 1fr); }
     }
   </style>
 </head>
 <body>
 
-  <h1 style="color: var(--primary-color)">🎉 El Bingo de Luca 🎉</h1>
+  <div class="overlay"></div>
 
-  <div class="main-container">
-    <div class="control-panel">
-      <div style="font-size: 1.2rem; color: #7f8c8d;">Salió el...</div>
-      <div id="numero-grande">--</div>
-      <div id="significado-texto">¡Suerte!</div>
-      
-      <div class="button-group">
-        <button id="btnSiguiente" onclick="proximoNumero()">¡Cantar Número!</button>
-        <button id="btnReiniciar" onclick="confirmarReinicio()">Reiniciar</button>
+  <div class="contenido-seguro">
+    <h1>🎉 El Bingo de Luca 🎉</h1>
+
+    <div class="paneles">
+      <div class="panel-izquierdo">
+        <div style="color: #7f8c8d; font-weight: bold;">NÚMERO</div>
+        <div id="numero-display">--</div>
+        <div id="significado-display">¡Suerte!</div>
+        
+        <div class="botones">
+          <button id="btnSiguiente" onclick="sacarNumero()">Siguiente</button>
+          <button id="btnReiniciar" onclick="reiniciar()">Reiniciar</button>
+        </div>
       </div>
-    </div>
 
-    <div class="board-panel">
-      <div id="grilla" class="grilla-bingo"></div>
+      <div class="panel-derecho">
+        <h3 style="margin-top: 0; color: #2c3e50; text-align: center;">Tablero General</h3>
+        <div id="tablero" class="grilla"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    const significados = {
+    // Base de datos de la Quiniela (Sueños)
+    const sueños = {
       1: "El Agua", 2: "El Niño", 3: "San Cono", 4: "La Cama", 5: "El Gato",
       6: "El Perro", 7: "El Revolver", 8: "El Incendio", 9: "El Arroyo", 10: "La Leche",
       11: "El Minero", 12: "El Soldado", 13: "La Yeta", 14: "El Borracho", 15: "La Niña Bonita",
@@ -162,76 +196,87 @@
       41: "El Cuchillo", 42: "La Zapatilla", 43: "El Balcón", 44: "La Cárcel", 45: "El Vino",
       46: "Tomates", 47: "El Muerto", 48: "Muerto que habla", 49: "La Carne", 50: "El Pan",
       51: "El Serrucho", 52: "Madre e Hijo", 53: "El Barco", 54: "La Vaca", 55: "La Música",
-      56: "La Caída", 57: "El Pecador", 58: "En el Ahogado", 59: "Las Plantas", 60: "La Virgen"
+      56: "La Caída", 57: "El Pecador", 58: "El Ahogado", 59: "Las Plantas", 60: "La Virgen"
     };
 
     let mazo = [];
-    let indice = 0;
-    const total = 60;
+    let actual = 0;
 
-    function crearGrilla() {
-      const grilla = document.getElementById('grilla');
-      grilla.innerHTML = '';
-      for (let i = 1; i <= total; i++) {
+    // 1. Crear el tablero visual
+    function dibujarTablero() {
+      const contenedor = document.getElementById('tablero');
+      contenedor.innerHTML = '';
+      for (let i = 1; i <= 60; i++) {
         const div = document.createElement('div');
-        div.className = 'celda';
-        div.id = `num-${i}`;
+        div.className = 'bola';
+        div.id = 'bola-' + i;
         div.textContent = i;
-        grilla.appendChild(div);
+        contenedor.appendChild(div);
       }
     }
 
-    function inicializarMazo() {
-      mazo = Array.from({length: total}, (_, i) => i + 1);
+    // 2. Mezclar números (Fisher-Yates)
+    function mezclar() {
+      mazo = Array.from({length: 60}, (_, i) => i + 1);
       for (let i = mazo.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
       }
     }
 
-    function proximoNumero() {
-      if (indice < mazo.length) {
-        const num = mazo[indice];
-        const textoSignificado = significados[num] || "";
+    // 3. Función principal: Sacar número
+    function sacarNumero() {
+      if (actual < mazo.length) {
+        const num = mazo[actual];
+        const txt = sueños[num] || "";
 
-        document.getElementById('numero-grande').textContent = num;
-        document.getElementById('significado-texto').textContent = textoSignificado;
-        document.getElementById(`num-${num}`).classList.add('marcada');
+        // Actualizar visuales
+        document.getElementById('numero-display').textContent = num;
+        document.getElementById('significado-display').textContent = txt;
+        document.getElementById('bola-' + num).classList.add('marcada');
 
-        cantar(num, textoSignificado);
-        indice++;
+        // Locución de voz
+        cantar(num, txt);
 
-        if (indice === total) {
-          document.getElementById('btnSiguiente').disabled = true;
-          document.getElementById('btnSiguiente').textContent = "¡BINGO!";
+        actual++;
+
+        if (actual === 60) {
+          const btn = document.getElementById('btnSiguiente');
+          btn.disabled = true;
+          btn.textContent = "FIN";
         }
       }
     }
 
-    function cantar(n, texto) {
+    // 4. Voz (Cantar número y significado)
+    function cantar(n, t) {
       if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // Detener si estaba hablando
-        const msg = new SpeechSynthesisUtterance(`${n}. ${texto}`);
-        msg.lang = 'es-AR'; // Acento local si está disponible
-        msg.rate = 0.85;
-        window.speechSynthesis.speak(msg);
+        window.speechSynthesis.cancel(); // Detener voz anterior
+        const frase = new SpeechSynthesisUtterance(`${n}. ${t}`);
+        frase.lang = 'es-AR';
+        frase.rate = 0.85; // Un poquito lento para que se entienda
+        window.speechSynthesis.speak(frase);
       }
     }
 
-    function confirmarReinicio() {
-      if (confirm("¿Reiniciar el tablero?")) {
-        indice = 0;
-        inicializarMazo();
-        crearGrilla();
-        document.getElementById('numero-grande').textContent = "--";
-        document.getElementById('significado-texto').textContent = "¡Suerte!";
+    // 5. Reiniciar
+    function reiniciar() {
+      if (confirm("¿Quieres empezar un juego nuevo?")) {
+        actual = 0;
+        mezclar();
+        dibujarTablero();
+        document.getElementById('numero-display').textContent = "--";
+        document.getElementById('significado-display').textContent = "¡Suerte!";
         document.getElementById('btnSiguiente').disabled = false;
-        document.getElementById('btnSiguiente').textContent = "¡Cantar Número!";
+        document.getElementById('btnSiguiente').textContent = "Siguiente";
       }
     }
 
-    inicializarMazo();
-    crearGrilla();
+    // Inicialización automática
+    window.onload = () => {
+      mezclar();
+      dibujarTablero();
+    };
   </script>
 </body>
 </html>
