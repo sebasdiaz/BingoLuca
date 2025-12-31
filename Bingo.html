@@ -121,4 +121,117 @@
     }
 
     #btnSiguiente { background: var(--secondary-color); color: white; }
-    #btnReiniciar { background: #eee
+    #btnReiniciar { background: #eee; color: #666; }
+
+    @media (max-width: 850px) {
+      .main-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="color: var(--primary-color)">🎉 El Bingo de Luca 🎉</h1>
+
+  <div class="main-container">
+    <div class="control-panel">
+      <div style="font-size: 1.2rem; color: #7f8c8d;">Salió el...</div>
+      <div id="numero-grande">--</div>
+      <div id="significado-texto">¡Suerte!</div>
+      
+      <div class="button-group">
+        <button id="btnSiguiente" onclick="proximoNumero()">¡Cantar Número!</button>
+        <button id="btnReiniciar" onclick="confirmarReinicio()">Reiniciar</button>
+      </div>
+    </div>
+
+    <div class="board-panel">
+      <div id="grilla" class="grilla-bingo"></div>
+    </div>
+  </div>
+
+  <script>
+    const significados = {
+      1: "El Agua", 2: "El Niño", 3: "San Cono", 4: "La Cama", 5: "El Gato",
+      6: "El Perro", 7: "El Revolver", 8: "El Incendio", 9: "El Arroyo", 10: "La Leche",
+      11: "El Minero", 12: "El Soldado", 13: "La Yeta", 14: "El Borracho", 15: "La Niña Bonita",
+      16: "El Anillo", 17: "La Desgracia", 18: "La Sangre", 19: "El Pescado", 20: "La Fiesta",
+      21: "La Mujer", 22: "El Loco", 23: "El Cocinero", 24: "El Caballo", 25: "La Gallina",
+      26: "La Misa", 27: "El Peine", 28: "El Cerro", 29: "San Pedro", 30: "Santa Rosa",
+      31: "La Luz", 32: "El Dinero", 33: "Cristo", 34: "La Cabeza", 35: "El Pajarito",
+      36: "La Manteca", 37: "El Dentista", 38: "Las Piedras", 39: "La Lluvia", 40: "El Cura",
+      41: "El Cuchillo", 42: "La Zapatilla", 43: "El Balcón", 44: "La Cárcel", 45: "El Vino",
+      46: "Tomates", 47: "El Muerto", 48: "Muerto que habla", 49: "La Carne", 50: "El Pan",
+      51: "El Serrucho", 52: "Madre e Hijo", 53: "El Barco", 54: "La Vaca", 55: "La Música",
+      56: "La Caída", 57: "El Pecador", 58: "En el Ahogado", 59: "Las Plantas", 60: "La Virgen"
+    };
+
+    let mazo = [];
+    let indice = 0;
+    const total = 60;
+
+    function crearGrilla() {
+      const grilla = document.getElementById('grilla');
+      grilla.innerHTML = '';
+      for (let i = 1; i <= total; i++) {
+        const div = document.createElement('div');
+        div.className = 'celda';
+        div.id = `num-${i}`;
+        div.textContent = i;
+        grilla.appendChild(div);
+      }
+    }
+
+    function inicializarMazo() {
+      mazo = Array.from({length: total}, (_, i) => i + 1);
+      for (let i = mazo.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+      }
+    }
+
+    function proximoNumero() {
+      if (indice < mazo.length) {
+        const num = mazo[indice];
+        const textoSignificado = significados[num] || "";
+
+        document.getElementById('numero-grande').textContent = num;
+        document.getElementById('significado-texto').textContent = textoSignificado;
+        document.getElementById(`num-${num}`).classList.add('marcada');
+
+        cantar(num, textoSignificado);
+        indice++;
+
+        if (indice === total) {
+          document.getElementById('btnSiguiente').disabled = true;
+          document.getElementById('btnSiguiente').textContent = "¡BINGO!";
+        }
+      }
+    }
+
+    function cantar(n, texto) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Detener si estaba hablando
+        const msg = new SpeechSynthesisUtterance(`${n}. ${texto}`);
+        msg.lang = 'es-AR'; // Acento local si está disponible
+        msg.rate = 0.85;
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    function confirmarReinicio() {
+      if (confirm("¿Reiniciar el tablero?")) {
+        indice = 0;
+        inicializarMazo();
+        crearGrilla();
+        document.getElementById('numero-grande').textContent = "--";
+        document.getElementById('significado-texto').textContent = "¡Suerte!";
+        document.getElementById('btnSiguiente').disabled = false;
+        document.getElementById('btnSiguiente').textContent = "¡Cantar Número!";
+      }
+    }
+
+    inicializarMazo();
+    crearGrilla();
+  </script>
+</body>
+</html>
