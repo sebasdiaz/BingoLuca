@@ -5,134 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>El Bingo de Luca</title>
   <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #27ae60;
+      --accent-color: #3498db;
+      --danger-color: #e74c3c;
+    }
+
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
-      background-image: url('LucaFutbol.jpg'); /* ⚠️ Asegúrate de tener esta imagen en la misma carpeta */
+      background-image: url('LucaFutbol.jpg'); 
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       padding: 20px;
-      color: #fff;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+      color: var(--primary-color);
     }
 
+    /* Capa de legibilidad */
     body::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.85);
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
       z-index: -1;
     }
 
     h1 {
-      font-size: 36px;
-      margin-bottom: 10px;
-      color: #2c3e50;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
-    .contenedor-principal {
+    .main-container {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 30px;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    /* Panel Izquierdo: Número Actual */
+    .control-panel {
       display: flex;
-      gap: 40px;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      max-width: 100%;
-    }
-
-    #numero {
-      font-size: 130px;
-      font-weight: bold;
-      color: #2c3e50;
-      margin: 20px 0;
-      min-width: 200px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px;
+      background: white;
+      padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      height: fit-content;
     }
 
-    #lista-salidos {
+    #numero-grande {
+      font-size: 150px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--accent-color);
+      margin: 20px 0;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .animar-numero {
+      transform: scale(1.2);
+    }
+
+    /* Panel Derecho: Grilla de números */
+    .board-panel {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .grilla-bingo {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      max-width: 300px;
-      margin-top: 20px;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
     }
 
-    .numero-salido {
-      background-color: #3498db;
-      color: white;
+    .celda {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ddd;
+      border-radius: 5px;
       font-weight: bold;
-      text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 16px;
+      color: #ccc;
+      font-size: 1.1rem;
     }
 
-    .botones {
+    .celda.marcada {
+      background-color: var(--secondary-color);
+      color: white;
+      border-color: var(--secondary-color);
+      transform: scale(1.05);
+      transition: all 0.3s ease;
+    }
+
+    /* Botones */
+    .button-group {
       display: flex;
       gap: 15px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
+      width: 100%;
     }
 
     button {
-      padding: 14px 24px;
-      font-size: 20px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      transition: background-color 0.3s, transform 0.2s;
+      flex: 1;
+      padding: 15px;
+      font-size: 1.2rem;
       font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    #btnSiguiente {
-      background-color: #27ae60;
-      color: white;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    #btnSiguiente { background: var(--secondary-color); color: white; }
+    #btnSiguiente:hover { background: #219150; }
+    #btnSiguiente:disabled { background: #bdc3c7; cursor: not-allowed; }
 
-    #btnReiniciar {
-      background-color: #e74c3c;
-      color: white;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    #btnReiniciar { background: #f1f1f1; color: var(--primary-color); }
+    #btnReiniciar:hover { background: #e0e0e0; }
 
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-    }
-
-    #btnSiguiente:hover:not(:disabled) {
-      background-color: #219653;
-    }
-
-    #btnReiniciar:hover {
-      background-color: #c0392b;
-    }
-
-    button:disabled {
-      background-color: #bdc3c7;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    h2 {
-      color: #2c3e50;
-      margin-top: 20px;
-      font-size: 20px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    @media (max-width: 850px) {
+      .main-container { grid-template-columns: 1fr; }
+      .grilla-bingo { grid-template-columns: repeat(6, 1fr); }
     }
   </style>
 </head>
@@ -140,71 +147,107 @@
 
   <h1>🎉 El Bingo de Luca 🎉</h1>
 
-  <div class="contenedor-principal">
-    <div>
-      <div id="numero">¡Presiona "Siguiente"!</div>
-      <div class="botones">
-        <button id="btnSiguiente" onclick="mostrarSiguiente()">Siguiente</button>
-        <button id="btnReiniciar" onclick="reiniciarJuego()">Jugar otra vez</button>
+  <div class="main-container">
+    <div class="control-panel">
+      <div id="status-text">Último número:</div>
+      <div id="numero-grande">--</div>
+      
+      <div class="button-group">
+        <button id="btnSiguiente" onclick="proximoNumero()">¡Siguiente!</button>
+        <button id="btnReiniciar" onclick="confirmarReinicio()">Reiniciar</button>
       </div>
+      <p style="margin-top:20px; font-size: 0.9rem; color: #7f8c8d;">
+        Rango: 1 - 60
+      </p>
     </div>
 
-    <div>
-      <h2>Números salidos:</h2>
-      <div id="lista-salidos"></div>
+    <div class="board-panel">
+      <h3 style="margin-top:0">Tablero General</h3>
+      <div id="grilla" class="grilla-bingo"></div>
     </div>
   </div>
 
   <script>
-    let numeros = [];
-    let indiceActual = 0;
-    const numeroElement = document.getElementById("numero");
-    const listaSalidos = document.getElementById("lista-salidos");
-    const btnSiguiente = document.getElementById("btnSiguiente");
+    let mazo = [];
+    let indice = 0;
+    const totalNumeros = 60;
 
-    function generarNumerosAleatorios() {
-      // Creamos un array del 1 al 60
-      const arr = Array.from({length: 60}, (_, i) => i + 1);
-      // Mezcla aleatoria (Fisher-Yates)
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    // Inicializar Grilla
+    function crearGrilla() {
+      const grilla = document.getElementById('grilla');
+      grilla.innerHTML = '';
+      for (let i = 1; i <= totalNumeros; i++) {
+        const div = document.createElement('div');
+        div.className = 'celda';
+        div.id = `num-${i}`;
+        div.textContent = i;
+        grilla.appendChild(div);
       }
-      return arr;
     }
 
-    function reiniciarJuego() {
-      numeros = generarNumerosAleatorios();
-      indiceActual = 0;
-      numeroElement.textContent = "¡Presiona \"Siguiente\"!";
-      listaSalidos.innerHTML = ""; // Limpia la lista
-      btnSiguiente.disabled = false;
-      btnSiguiente.textContent = "Siguiente";
+    function inicializarMazo() {
+      mazo = Array.from({length: totalNumeros}, (_, i) => i + 1);
+      // Mezcla Fisher-Yates
+      for (let i = mazo.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+      }
     }
 
-    function mostrarSiguiente() {
-      if (indiceActual < numeros.length) {
-        const num = numeros[indiceActual];
-        numeroElement.textContent = num;
+    function proximoNumero() {
+      if (indice < mazo.length) {
+        const num = mazo[indice];
+        
+        // Actualizar número grande con animación
+        const el = document.getElementById('numero-grande');
+        el.textContent = num;
+        el.classList.remove('animar-numero');
+        void el.offsetWidth; // Force reflow
+        el.classList.add('animar-numero');
 
-        const numElement = document.createElement("div");
-        numElement.className = "numero-salido";
-        numElement.textContent = num;
-        listaSalidos.appendChild(numElement);
+        // Marcar en la grilla
+        document.getElementById(`num-${num}`).classList.add('marcada');
 
-        indiceActual++;
+        // Cantar el número (Voz)
+        cantarNumero(num);
 
-        if (indiceActual >= numeros.length) {
-          btnSiguiente.disabled = true;
-          btnSiguiente.textContent = "¡Bingo completo!";
+        indice++;
+
+        if (indice === totalNumeros) {
+          document.getElementById('btnSiguiente').disabled = true;
+          document.getElementById('btnSiguiente').textContent = "¡FIN!";
         }
       }
     }
 
-    // Inicializar el juego la primera vez
-    reiniciarJuego();
+    function cantarNumero(n) {
+      if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = n.toString();
+        msg.lang = 'es-ES';
+        msg.rate = 0.9; // Un poco más lento para que se entienda bien
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    function confirmarReinicio() {
+      if (confirm("¿Seguro quieres empezar de cero?")) {
+        reiniciar();
+      }
+    }
+
+    function reiniciar() {
+      indice = 0;
+      inicializarMazo();
+      crearGrilla();
+      document.getElementById('numero-grande').textContent = "--";
+      document.getElementById('btnSiguiente').disabled = false;
+      document.getElementById('btnSiguiente').textContent = "¡Siguiente!";
+    }
+
+    // Arrancar
+    reiniciar();
   </script>
 
 </body>
 </html>
-
