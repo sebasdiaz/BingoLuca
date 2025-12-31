@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>El Bingo de Luca</title>
+  <title>El Bingo de Luca - Edición Quiniela</title>
   <style>
     :root {
       --primary-color: #2c3e50;
       --secondary-color: #27ae60;
       --accent-color: #3498db;
-      --danger-color: #e74c3c;
+      --highlight-color: #f39c12;
     }
 
     body {
@@ -22,26 +22,16 @@
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       padding: 20px;
-      color: var(--primary-color);
     }
 
-    /* Capa de legibilidad */
     body::before {
       content: '';
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.92);
       z-index: -1;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
     }
 
     .main-container {
@@ -52,36 +42,39 @@
       max-width: 1100px;
     }
 
-    /* Panel Izquierdo: Número Actual */
+    /* Panel Izquierdo: Número y Significado */
     .control-panel {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       background: white;
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      height: fit-content;
+      text-align: center;
     }
 
     #numero-grande {
-      font-size: 150px;
-      line-height: 1;
+      font-size: 160px;
       font-weight: 900;
       color: var(--accent-color);
-      margin: 20px 0;
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      line-height: 1;
+      margin: 10px 0;
     }
 
-    .animar-numero {
-      transform: scale(1.2);
+    #significado-texto {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--highlight-color);
+      min-height: 3.5rem;
+      text-transform: uppercase;
+      margin-bottom: 20px;
     }
 
-    /* Panel Derecho: Grilla de números */
+    /* Tablero Derecho */
     .board-panel {
       background: white;
-      padding: 25px;
+      padding: 20px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
@@ -89,7 +82,7 @@
     .grilla-bingo {
       display: grid;
       grid-template-columns: repeat(10, 1fr);
-      gap: 8px;
+      gap: 5px;
     }
 
     .celda {
@@ -97,157 +90,35 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      border: 1px solid #eee;
+      border-radius: 8px;
       font-weight: bold;
-      color: #ccc;
-      font-size: 1.1rem;
+      color: #ddd;
+      font-size: 1rem;
     }
 
     .celda.marcada {
       background-color: var(--secondary-color);
       color: white;
-      border-color: var(--secondary-color);
       transform: scale(1.05);
-      transition: all 0.3s ease;
     }
 
-    /* Botones */
     .button-group {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       width: 100%;
     }
 
     button {
       flex: 1;
-      padding: 15px;
+      padding: 18px;
       font-size: 1.2rem;
       font-weight: bold;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: 0.2s;
     }
 
     #btnSiguiente { background: var(--secondary-color); color: white; }
-    #btnSiguiente:hover { background: #219150; }
-    #btnSiguiente:disabled { background: #bdc3c7; cursor: not-allowed; }
-
-    #btnReiniciar { background: #f1f1f1; color: var(--primary-color); }
-    #btnReiniciar:hover { background: #e0e0e0; }
-
-    @media (max-width: 850px) {
-      .main-container { grid-template-columns: 1fr; }
-      .grilla-bingo { grid-template-columns: repeat(6, 1fr); }
-    }
-  </style>
-</head>
-<body>
-
-  <h1>🎉 El Bingo de Luca 🎉</h1>
-
-  <div class="main-container">
-    <div class="control-panel">
-      <div id="status-text">Último número:</div>
-      <div id="numero-grande">--</div>
-      
-      <div class="button-group">
-        <button id="btnSiguiente" onclick="proximoNumero()">¡Siguiente!</button>
-        <button id="btnReiniciar" onclick="confirmarReinicio()">Reiniciar</button>
-      </div>
-      <p style="margin-top:20px; font-size: 0.9rem; color: #7f8c8d;">
-        Rango: 1 - 60
-      </p>
-    </div>
-
-    <div class="board-panel">
-      <h3 style="margin-top:0">Tablero General</h3>
-      <div id="grilla" class="grilla-bingo"></div>
-    </div>
-  </div>
-
-  <script>
-    let mazo = [];
-    let indice = 0;
-    const totalNumeros = 60;
-
-    // Inicializar Grilla
-    function crearGrilla() {
-      const grilla = document.getElementById('grilla');
-      grilla.innerHTML = '';
-      for (let i = 1; i <= totalNumeros; i++) {
-        const div = document.createElement('div');
-        div.className = 'celda';
-        div.id = `num-${i}`;
-        div.textContent = i;
-        grilla.appendChild(div);
-      }
-    }
-
-    function inicializarMazo() {
-      mazo = Array.from({length: totalNumeros}, (_, i) => i + 1);
-      // Mezcla Fisher-Yates
-      for (let i = mazo.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
-      }
-    }
-
-    function proximoNumero() {
-      if (indice < mazo.length) {
-        const num = mazo[indice];
-        
-        // Actualizar número grande con animación
-        const el = document.getElementById('numero-grande');
-        el.textContent = num;
-        el.classList.remove('animar-numero');
-        void el.offsetWidth; // Force reflow
-        el.classList.add('animar-numero');
-
-        // Marcar en la grilla
-        document.getElementById(`num-${num}`).classList.add('marcada');
-
-        // Cantar el número (Voz)
-        cantarNumero(num);
-
-        indice++;
-
-        if (indice === totalNumeros) {
-          document.getElementById('btnSiguiente').disabled = true;
-          document.getElementById('btnSiguiente').textContent = "¡FIN!";
-        }
-      }
-    }
-
-    function cantarNumero(n) {
-      if ('speechSynthesis' in window) {
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = n.toString();
-        msg.lang = 'es-ES';
-        msg.rate = 0.9; // Un poco más lento para que se entienda bien
-        window.speechSynthesis.speak(msg);
-      }
-    }
-
-    function confirmarReinicio() {
-      if (confirm("¿Seguro quieres empezar de cero?")) {
-        reiniciar();
-      }
-    }
-
-    function reiniciar() {
-      indice = 0;
-      inicializarMazo();
-      crearGrilla();
-      document.getElementById('numero-grande').textContent = "--";
-      document.getElementById('btnSiguiente').disabled = false;
-      document.getElementById('btnSiguiente').textContent = "¡Siguiente!";
-    }
-
-    // Arrancar
-    reiniciar();
-  </script>
-
-</body>
-</html>
+    #btnReiniciar { background: #eee
